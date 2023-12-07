@@ -9,7 +9,7 @@ async function runDB() {
     if (connection) {
       console.log(chalk.green('Connected to MongoDB Successfully!!'));
       app.listen(config.port, () => {
-        console.log(chalk.green('Server is running on port:...', config.port));
+        console.log(chalk.green('Server is running on port...:', config.port));
       });
     }
   } catch (err) {
