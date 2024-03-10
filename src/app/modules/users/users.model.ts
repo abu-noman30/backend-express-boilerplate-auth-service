@@ -12,4 +12,4 @@ const userSchema = new Schema<T_User>(
 );
 
 // Model for User
-const User = model<T_User>('User', userSchema);
+export const User = model<T_User>('User', userSchema);
