@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 1
+    },
+    "auditLog": "/Users/noman/PHero/university-management-auth-service/logs/winston/success-logs/.d45e36b40bc2a55fefc33d80758127f5f0cc06af-audit.json",
+    "files": [
+        {
+            "date": 1710152363493,
+            "name": "/Users/noman/PHero/university-management-auth-service/logs/winston/success-logs/2024-03-11-16-success.log",
+            "hash": "62b90835171964095b2d47a0b6f5bc859128980aa69f7e9e94e54107463f8463"
+        }
+    ],
+    "hashType": "sha256"
+}
