@@ -28,7 +28,7 @@ const createLogger = (level: string, folderName: string, filename: string) => {
 			new winston.transports.Console({
 				format: combine(colorize(), myFormat)
 			}),
-			createRotateFileTransport(folderName, filename)
+			// createRotateFileTransport(folderName, filename)
 		]
 	});
 };

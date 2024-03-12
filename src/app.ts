@@ -13,12 +13,7 @@ app.use('/api/v1/users', userRouter);
 
 // Test route
 app.get('/', (req: Request, res: Response) => {
-	res.send('Server is running...');
-});
-
-// Error handling middleware
-app.use((err: Error, req: Request, res: Response) => {
-	res.status(500).json({ message: err.message });
+  res.send('Server is running...');
 });
 
 export default app;
