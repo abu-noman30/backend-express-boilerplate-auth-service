@@ -43,10 +43,10 @@ process.on('unhandledRejection', (err) => {
 });
 
 // Handle SIGTERM signal
-process.on('SIGTERM', (err) => {
+/* process.on('SIGTERM', (err) => {
   if (serverListener) {
     serverListener.close();
   }
   loggerError.error(`SIGTERM RECEIVED: ${err}`);
   process.exit(1);
-});
+}); */
