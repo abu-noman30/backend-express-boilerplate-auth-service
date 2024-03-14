@@ -8,38 +8,38 @@ import { loggerError, loggerInfo } from './services/logger/logger';
 let serverListener: Server;
 
 async function runDB() {
-  // Connect to MongoDB
-  try {
-    const connection = await mongoose.connect(config.db.uri as string);
-    if (connection) {
-      loggerInfo.info('Connected to MongoDB Successfully!!');
+	// Connect to MongoDB
+	try {
+		const connection = await mongoose.connect(config.db.uri as string);
+		if (connection) {
+			loggerInfo.info('Connected to MongoDB Successfully!!');
 
-      serverListener = app.listen(config.port, () => {
-        loggerInfo.info(`Server is running on port...${config.port} | ENV: ${config.env}`);
-      });
-    }
-  } catch (err) {
-    loggerError.error('Error connecting to MongoDB');
-  }
+			serverListener = app.listen(config.port, () => {
+				loggerInfo.info(`Server is running on port...${config.port} | ENV: ${config.env}`);
+			});
+		}
+	} catch (err) {
+		loggerError.error('Error connecting to MongoDB');
+	}
 
-  // Handle unhandled promise rejections
-  process.on('unhandledRejection', (err) => {
-    if (serverListener) {
-      serverListener.close();
-    }
-    loggerError.error(`Unhandled Rejection: ${err}`);
-    process.exit(1);
-  });
+	// Handle unhandled promise rejections
+	process.on('unhandledRejection', (err) => {
+		if (serverListener) {
+			serverListener.close();
+		}
+		loggerError.error(`Unhandled Rejection: ${err}`);
+		process.exit(1);
+	});
 }
 runDB();
 
 // Handle Unhandled Promise Rejections
 process.on('unhandledRejection', (err) => {
-  if (serverListener) {
-    serverListener.close();
-  }
-  loggerError.error(`Unhandled Rejection: ${err}`);
-  process.exit(1);
+	if (serverListener) {
+		serverListener.close();
+	}
+	loggerError.error(`Unhandled Rejection: ${err}`);
+	process.exit(1);
 });
 
 // Handle SIGTERM signal

@@ -1,3 +1,3 @@
 export const generateIncrementedUserId = (id: string): string => {
-  return id;
+	return (parseInt(id) + 1).toString();
 };

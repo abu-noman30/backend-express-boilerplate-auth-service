@@ -2,9 +2,11 @@ import chalk from 'chalk';
 import config from '../../../config';
 
 import { ErrorRequestHandler } from 'express';
+import { ZodError } from 'zod';
 import { loggerError } from '../../../services/Logger/logger';
 import { ApiError } from '../../../services/errorHandlers/handleApiError';
 import { handleValidationError } from '../../../services/errorHandlers/handleValidationError';
+import { handleZodError } from '../../../services/errorHandlers/handleZodError';
 import { T_GenericErrorMessage } from '../../../services/errorHandlers/interfaces/error.interface';
 import { ErrorType } from './errorType.enum';
 
@@ -29,12 +31,13 @@ export const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) =
         errorMessages = simplifiedErrorCast.errorMessages;
         break; */
 
-		/*  case error instanceof ZodError:
-      const simplifiedErrorZod = handleZodError(error);
-      statusCode = simplifiedErrorZod.statusCode;
-      message = simplifiedErrorZod.message;
-      errorMessages = simplifiedErrorZod.errorMessages;
-      break; */
+		// zod error
+		case error instanceof ZodError:
+			const simplifiedErrorZod = handleZodError(error);
+			statusCode = simplifiedErrorZod.statusCode;
+			message = simplifiedErrorZod.message;
+			errorMessages = simplifiedErrorZod.errorMessages;
+			break;
 
 		// error instanceof ApiError
 		case error instanceof ApiError:

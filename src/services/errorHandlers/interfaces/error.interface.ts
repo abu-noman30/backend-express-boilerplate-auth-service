@@ -1,5 +1,5 @@
 export type T_GenericErrorMessage = {
-	path: string;
+	path: string | number;
 	message: string;
 };
 
