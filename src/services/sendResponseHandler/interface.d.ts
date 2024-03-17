@@ -1,4 +1,4 @@
-export type T_ApiResponse<T> = {
+export type T_GenericApiResponse<T> = {
 	statusCode: number;
 	success: boolean;
 	message?: string | null;

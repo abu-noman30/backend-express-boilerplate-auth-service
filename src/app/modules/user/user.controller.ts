@@ -1,20 +1,40 @@
-import { RequestHandler } from 'express';
+import httpStatus from 'http-status';
 import catchAsync from '../../../services/catchAsync/catchAsync';
+import sendResponseHandler from '../../../services/sendResponseHandler/sendResponseHandler';
+
+import { RequestHandler } from 'express';
+import { queryParamsPicker } from '../../../services/queryParamsPicker/queryParamsPicker';
+import { PAGINATION_FIELDS } from '../../../shared/pagination/pagination.constant';
+import { T_User } from './user.interface';
 import { UserServices } from './user.service';
 
-const createUserController: RequestHandler = catchAsync(async (req, res, next) => {
-	const userData = req.body;
-	const result = await UserServices.createUserService(userData);
+const createUserController: RequestHandler = catchAsync(async (req, res) => {
+  const userData = req.body;
+  const result = await UserServices.createUserService(userData);
 
-	next();
+  sendResponseHandler<T_User>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User created successfully',
+    data: result
+  });
+});
 
-	res.status(200).json({
-		success: true,
-		message: 'User created successfully',
-		data: result
-	});
+const getAllUserController: RequestHandler = catchAsync(async (req, res) => {
+  const paginationOptions = queryParamsPicker(req.query, PAGINATION_FIELDS);
+
+  const result = await UserServices.getAllUserService(paginationOptions);
+
+  sendResponseHandler<T_User[]>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Users fetched successfully',
+    meta: result.meta,
+    data: result.data
+  });
 });
 
 export const UserControllers = {
-	createUserController
+  createUserController,
+  getAllUserController
 };
