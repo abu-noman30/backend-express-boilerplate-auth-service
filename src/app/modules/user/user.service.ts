@@ -1,8 +1,9 @@
+import { SortOrder } from 'mongoose';
 import { calculatePagination } from '../../../helpers/paginationHelper/calculatePagination';
 import { ApiError } from '../../../services/errorHandlers/handleApiError';
 import { T_QueryPaginationOptions } from '../../../shared/pagination/pagination';
 import { T_GenericServiceResponse } from '../../../shared/types/global';
-import { T_User } from './user.interface';
+import { T_User, T_UserSearchFilters } from './user.interface';
 import { User } from './user.model';
 import { generateIncrementedUserId } from './user.utils';
 
@@ -30,18 +31,26 @@ const createUserService = async (user: T_User): Promise<T_User> => {
 };
 
 const getAllUserService = async (
-  paginationOptions: T_QueryPaginationOptions
+  paginationOptions: T_QueryPaginationOptions,
+  filterOptions: T_UserSearchFilters
 ): Promise<T_GenericServiceResponse<T_User[]>> => {
-  const queryPagination = calculatePagination(paginationOptions);
+  // Pagination calculation
+  const { page, limit, skip, sortBy, orderBy } = calculatePagination(paginationOptions);
+  // Extract searchTerm to implement search query
+  const { searchTerm, ...filtersQueryParams } = filterOptions;
 
-  const result = await User.find().skip(queryPagination?.skip).limit(queryPagination?.limit);
+  // Dynamic  Sort needs  field to do sorting
+  const sortByOrderByCondition: { [key: string]: SortOrder } = {};
+  if (sortBy && orderBy) sortByOrderByCondition[sortBy] = orderBy;
+
+  const result = await User.find().sort(sortByOrderByCondition).skip(skip).limit(limit);
   const total = await User.countDocuments();
 
   return {
     meta: {
-      page: queryPagination?.page,
-      limit: queryPagination?.limit,
-      total
+      page: page,
+      limit: limit,
+      total: total
     },
     data: result
   };
