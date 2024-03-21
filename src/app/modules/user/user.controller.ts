@@ -23,9 +23,9 @@ const createUserController: RequestHandler = catchAsync(async (req, res) => {
 
 const getAllUserController: RequestHandler = catchAsync(async (req, res) => {
 	const paginationOptions = queryParamsPicker(req.query, PAGINATION_FIELDS);
-	const filterOptions = queryParamsPicker(req.query, UserConstants.SEARCH_FIELDS);
+	const searchFilterFields= queryParamsPicker(req.query, UserConstants.SEARCH_FIELDS);
 
-	const result = await UserServices.getAllUserService(paginationOptions, filterOptions);
+	const result = await UserServices.getAllUserService(paginationOptions, searchFilterFields);
 
 	sendResponseHandler<T_User[]>(res, {
 		statusCode: httpStatus.OK,

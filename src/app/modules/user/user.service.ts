@@ -1,9 +1,9 @@
-import { SortOrder } from 'mongoose';
 import { calculatePagination } from '../../../helpers/paginationHelper/calculatePagination';
 import { ApiError } from '../../../services/errorHandlers/handleApiError';
 import { T_QueryPaginationOptions } from '../../../shared/pagination/pagination';
 import { T_GenericServiceResponse } from '../../../shared/types/global';
-import { T_User, T_UserSearchFilters } from './user.interface';
+import { UserConstants } from './user.constant';
+import { T_SortByOrderByCondition, T_User, T_UserSearchFilters } from './user.interface';
 import { User } from './user.model';
 import { generateIncrementedUserId } from './user.utils';
 
@@ -32,25 +32,49 @@ const createUserService = async (user: T_User): Promise<T_User> => {
 
 const getAllUserService = async (
 	paginationOptions: T_QueryPaginationOptions,
-	filterOptions: T_UserSearchFilters
+	searchFilterFields: T_UserSearchFilters
 ): Promise<T_GenericServiceResponse<T_User[]>> => {
 	// Pagination calculation
 	const { page, limit, skip, sortBy, orderBy } = calculatePagination(paginationOptions);
-	// Extract searchTerm to implement search query
-	const { searchTerm, ...filtersQueryParams } = filterOptions;
 
 	// Dynamic  Sort needs  field to do sorting
-	const sortByOrderByCondition: { [key: string]: SortOrder } = {};
+	const sortByOrderByCondition: T_SortByOrderByCondition = {};
 	if (sortBy && orderBy) sortByOrderByCondition[sortBy] = orderBy;
 
-	const result = await User.find().sort(sortByOrderByCondition).skip(skip).limit(limit);
+	// Extract searchTerm to implement search query
+	const { searchTerm, ...restSearchFields } = searchFilterFields;
+
+	// Search query conditions
+	const andConditions = [];
+
+	if (searchTerm) {
+		andConditions.push({
+			$or: UserConstants.SEARCHING_FIELDS_FOR_SEARCH_TERM.map((field) => ({
+				[field]: {
+					$regex: searchTerm,
+					$options: 'i'
+				}
+			}))
+		});
+	}
+
+	if (Object.keys(restSearchFields).length > 0) {
+		andConditions.push({
+			$and: Object.entries(restSearchFields).map(([field, value]) => ({ [field]: value }))
+		});
+	}
+
+	// If there is no condition , put {} to give all data
+	const whereCondition = andConditions.length > 0 ? { $and: andConditions } : {};
+
+	const result = await User.find(whereCondition).sort(sortByOrderByCondition).skip(skip).limit(limit);
 	const total = await User.countDocuments();
 
 	return {
 		meta: {
-			page: page,
-			limit: limit,
-			total: total
+			page,
+			limit,
+			total
 		},
 		data: result
 	};
