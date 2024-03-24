@@ -23,7 +23,7 @@ const createUserController: RequestHandler = catchAsync(async (req, res) => {
 
 const getAllUserController: RequestHandler = catchAsync(async (req, res) => {
 	const paginationOptions = queryParamsPicker(req.query, PAGINATION_FIELDS);
-	const searchFilterFields= queryParamsPicker(req.query, UserConstants.SEARCH_FIELDS);
+	const searchFilterFields = queryParamsPicker(req.query, UserConstants.SEARCH_FIELDS);
 
 	const result = await UserServices.getAllUserService(paginationOptions, searchFilterFields);
 
@@ -36,7 +36,35 @@ const getAllUserController: RequestHandler = catchAsync(async (req, res) => {
 	});
 });
 
+const getSingleUserController: RequestHandler = catchAsync(async (req, res) => {
+	const userId = req.params.id;
+	const result = await UserServices.getSingleUserService(userId);
+
+	sendResponseHandler<T_User>(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: 'User fetched successfully',
+		data: result
+	});
+});
+
+const updateUserController: RequestHandler = catchAsync(async (req, res) => { 
+	const userId = req.params.id;
+	const updatedData = req.body;
+
+	const result = await UserServices.updateUserService(userId, updatedData);
+
+	sendResponseHandler<T_User>(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: 'User updated successfully',
+		data: result
+	});
+});
+
 export const UserControllers = {
 	createUserController,
-	getAllUserController
+	getAllUserController,
+	getSingleUserController,
+	updateUserController
 };
