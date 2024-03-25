@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+
 import { calculatePagination } from '../../../helpers/paginationHelper/calculatePagination';
 import { ApiError } from '../../../services/errorHandlers/handleApiError';
 import { T_QueryPaginationOptions } from '../../../shared/pagination/pagination';
@@ -25,7 +26,7 @@ const createUserService = async (user: T_User): Promise<T_User> => {
 	const newUser = await User.create(userObj);
 
 	if (!newUser) {
-		throw new ApiError(httpStatus[500], 'User not created');
+		throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'User not created');
 	}
 
 	return newUser;
@@ -85,7 +86,7 @@ const getSingleUserService = async (userId: string): Promise<T_User> => {
 	const user = await User.findById(userId);
 
 	if (!user) {
-		throw new ApiError(httpStatus[500], 'User not found');
+		throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'User not found');
 	}
 
 	return user;
@@ -95,9 +96,14 @@ const updateUserService = async (userId: string, payload: Partial<T_User>): Prom
 	const result = await User.findOneAndUpdate({ _id: userId }, payload, { new: true, upsert: true });
 
 	if (!result) {
-		throw new ApiError(httpStatus[500], 'User not updated');
+		throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'User not updated');
 	}
 
+	return result;
+};
+
+const deleteUserService = async (userId: string): Promise<T_User | null | unknown> => {
+	const result = await User.findByIdAndDelete(userId);
 	return result;
 };
 
@@ -105,5 +111,6 @@ export const UserServices = {
 	createUserService,
 	getAllUserService,
 	getSingleUserService,
-	updateUserService
+	updateUserService,
+	deleteUserService
 };

@@ -1,7 +1,7 @@
 export class ApiError extends Error {
-	statusCode: number | string;
+	statusCode: number;
 
-	constructor(statusCode: number | string, message: string | undefined, stack = '') {
+	constructor(statusCode: number, message: string | undefined, stack = '') {
 		super(message);
 
 		this.statusCode = statusCode;

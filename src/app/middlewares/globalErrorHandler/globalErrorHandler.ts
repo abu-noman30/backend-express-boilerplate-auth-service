@@ -10,7 +10,7 @@ import { handleCastError } from '../../../services/errorHandlers/handleCastError
 import { handleValidationError } from '../../../services/errorHandlers/handleValidationError';
 import { handleZodError } from '../../../services/errorHandlers/handleZodError';
 
-export const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
+export const globalErrorHandler: ErrorRequestHandler = (error, req, res) => {
 	let statusCode = 500;
 	let message = 'Something went wrong';
 	let errorMessages: T_ErrorMessages[] = [];
@@ -67,8 +67,6 @@ export const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) =
 		errorMessages,
 		stack: config.env === 'production' ? undefined : error?.stack
 	});
-
-	next();
 };
 
 enum ErrorType {

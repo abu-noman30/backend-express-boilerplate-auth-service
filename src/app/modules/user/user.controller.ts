@@ -48,7 +48,7 @@ const getSingleUserController: RequestHandler = catchAsync(async (req, res) => {
 	});
 });
 
-const updateUserController: RequestHandler = catchAsync(async (req, res) => { 
+const updateUserController: RequestHandler = catchAsync(async (req, res) => {
 	const userId = req.params.id;
 	const updatedData = req.body;
 
@@ -62,9 +62,22 @@ const updateUserController: RequestHandler = catchAsync(async (req, res) => {
 	});
 });
 
+const deleteUserController: RequestHandler = catchAsync(async (req, res) => {
+	const userId = req.params.id;
+	const result = await UserServices.deleteUserService(userId);
+
+	sendResponseHandler(res, {
+		statusCode: result ? httpStatus.OK : httpStatus.NOT_FOUND,
+		success: result ? true : false,
+		message: result ? 'User deleted successfully' : 'User not found',
+		data: result
+	});
+});
+
 export const UserControllers = {
 	createUserController,
 	getAllUserController,
 	getSingleUserController,
-	updateUserController
+	updateUserController,
+	deleteUserController
 };

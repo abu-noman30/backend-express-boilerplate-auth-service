@@ -8,7 +8,15 @@ const userSchema = new Schema<T_User>(
 		user_role: { type: String, required: true },
 		user_password: { type: String }
 	},
-	{ timestamps: true }
+	{
+		// add createdAt and updatedAt fields
+		timestamps: true,
+
+		// convert _id to id -> all database include mongodb have id field instead of _id
+		toJSON: {
+			virtuals: true
+		}
+	}
 );
 
 // Model for User
