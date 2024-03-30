@@ -4,7 +4,7 @@ import sendResponseHandler from '../../../services/sendResponseHandler/sendRespo
 
 import { RequestHandler } from 'express';
 import { queryParamsPicker } from '../../../services/queryParamsPicker/queryParamsPicker';
-import { PAGINATION_FIELDS } from '../../../shared/pagination/pagination.constant';
+import { PAGINATION_QUERIES } from '../../../shared/pagination/pagination.constant';
 import { UserConstants } from './user.constant';
 import { T_User } from './user.interface';
 import { UserServices } from './user.service';
@@ -22,10 +22,10 @@ const createUserController: RequestHandler = catchAsync(async (req, res) => {
 });
 
 const getAllUserController: RequestHandler = catchAsync(async (req, res) => {
-	const paginationOptions = queryParamsPicker(req.query, PAGINATION_FIELDS);
-	const searchFilterFields = queryParamsPicker(req.query, UserConstants.SEARCH_FIELDS);
+	const paginationQueries = queryParamsPicker(req.query, PAGINATION_QUERIES);
+	const searchQueries = queryParamsPicker(req.query, UserConstants.SEARCH_QUERIES);
 
-	const result = await UserServices.getAllUserService(paginationOptions, searchFilterFields);
+	const result = await UserServices.getAllUserService(paginationQueries, searchQueries);
 
 	sendResponseHandler<T_User[]>(res, {
 		statusCode: httpStatus.OK,

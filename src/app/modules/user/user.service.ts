@@ -5,7 +5,7 @@ import { ApiError } from '../../../services/errorHandlers/handleApiError';
 import { T_QueryPaginationOptions } from '../../../shared/pagination/pagination';
 import { T_GenericServiceResponse } from '../../../shared/types/global';
 import { UserConstants } from './user.constant';
-import { T_SortByOrderByCondition, T_User, T_UserSearchFilters } from './user.interface';
+import { T_UserSortByOrderByCondition, T_User, T_UserQuerySearchOptions } from './user.interface';
 import { User } from './user.model';
 import { generateIncrementedUserId } from './user.utils';
 
@@ -33,25 +33,25 @@ const createUserService = async (user: T_User): Promise<T_User> => {
 };
 
 const getAllUserService = async (
-	paginationOptions: T_QueryPaginationOptions,
-	searchFilterFields: T_UserSearchFilters
+	paginationQueries: T_QueryPaginationOptions,
+	searchQueries: T_UserQuerySearchOptions
 ): Promise<T_GenericServiceResponse<T_User[]>> => {
 	// Pagination calculation
-	const { page, limit, skip, sortBy, orderBy } = calculatePagination(paginationOptions);
+	const { page, limit, skip, sortBy, orderBy } = calculatePagination(paginationQueries);
 
 	// Dynamic  Sort needs  field to do sorting
-	const sortByOrderByCondition: T_SortByOrderByCondition = {};
+	const sortByOrderByCondition: T_UserSortByOrderByCondition = {};
 	if (sortBy && orderBy) sortByOrderByCondition[sortBy] = orderBy;
 
 	// Extract searchTerm to implement search query
-	const { searchTerm, ...restSearchFields } = searchFilterFields;
+	const { searchTerm, ...restSearchQueries } = searchQueries;
 
 	// Search query conditions
 	const andConditions = [];
 
 	if (searchTerm) {
 		andConditions.push({
-			$or: UserConstants.SEARCHING_FIELDS_FOR_SEARCH_TERM.map((field) => ({
+			$or: UserConstants.SEARCH_FIELDS_SEARCH_BY_searchTerm.map((field) => ({
 				[field]: {
 					$regex: searchTerm,
 					$options: 'i'
@@ -60,9 +60,9 @@ const getAllUserService = async (
 		});
 	}
 
-	if (Object.keys(restSearchFields).length > 0) {
+	if (Object.keys(restSearchQueries).length > 0) {
 		andConditions.push({
-			$and: Object.entries(restSearchFields).map(([field, value]) => ({ [field]: value }))
+			$and: Object.entries(restSearchQueries).map(([field, value]) => ({ [field]: value }))
 		});
 	}
 
